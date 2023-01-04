@@ -8,7 +8,7 @@ class NewsEvent extends Equatable {
 class GetArticlesEvent extends NewsEvent {
   final String categoryName;
 
-  // Initially show topheadlines
+  // Initially show general category data
   // But when category is specified, show results accordingly
-  GetArticlesEvent({this.categoryName = 'topheadlines'});
+  GetArticlesEvent({this.categoryName = "general"});
 }

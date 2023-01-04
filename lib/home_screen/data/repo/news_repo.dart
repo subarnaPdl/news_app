@@ -3,14 +3,15 @@ import 'package:http/http.dart' as http;
 import 'package:news_app/home_screen/data/models/article_model.dart';
 
 class NewsRepository {
-  Future<List<ArticleModel>> getArticles(String category) async {
+  Future<List<ArticleModel>> getArticles(String categoryName) async {
     List<ArticleModel> articles = [];
 
     Map<String, String> params = {
-      'category': category,
+      'category': categoryName,
       'apiKey': '22a6860c457f412d9f2e6af023fe07fa',
     };
-    final uri = Uri.https('newsapi.org', '/v2/', params);
+    // https://newsapi.org/v2/top-headlines?category=$category&apiKey=$apiKey
+    final uri = Uri.https('newsapi.org', '/v2/top-headlines', params);
 
     try {
       final response = await http.get(uri);
@@ -20,9 +21,10 @@ class NewsRepository {
       articles = articlesJson
           .map((dynamic item) => ArticleModel.fromJson(item))
           .toList();
+
       return articles;
     } catch (e) {
-      throw ("Error while fetching articles");
+      throw ("Error on NewsRepository: ${e.toString()}");
     }
   }
 }

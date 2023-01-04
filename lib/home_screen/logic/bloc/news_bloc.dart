@@ -22,7 +22,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         // On failed loading news, emit error state
         catch (e) {
           emit(NewsErrorState());
-          throw ("Couldn't fetch data! BLOC Error!");
+          throw ("Error on NewsBloc: ${e.toString()}");
         }
       }
     });
