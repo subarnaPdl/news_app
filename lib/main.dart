@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:news_app/home_screen/logic/bloc/news_bloc.dart';
 import 'package:news_app/routes/routes.dart';
 import 'package:news_app/routes/routes_constant.dart';
 
@@ -16,7 +18,10 @@ Future<void> main() async {
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
 
-  runApp(const MyApp());
+  runApp(BlocProvider(
+    create: (context) => NewsBloc(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
