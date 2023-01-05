@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:news_app/home_screen/data/models/article_model.dart';
 
 class ArticleCard extends StatelessWidget {
@@ -17,12 +18,27 @@ class ArticleCard extends StatelessWidget {
     required this.articleModel,
   }) : super(key: key);
 
+  Future<void> _cardOnTap(BuildContext context, String url) async {
+    Uri uri = Uri.parse(url);
+
+    try {
+      // launch url in webview
+      await launchUrl(uri);
+    }
+    // Show error message on error
+    catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Error loading URL!!'),
+        duration: Duration(seconds: 1),
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // TODO: Implement ontap
-      },
+      onTap: () async =>
+          await _cardOnTap(context, articleModel.url!), // launch URL in webview
       child: Card(
         margin: const EdgeInsets.all(5),
         child: Padding(
@@ -38,26 +54,9 @@ class ArticleCard extends StatelessWidget {
                     imageUrl: articleModel.urlToImage!,
                     cacheKey: articleModel.urlToImage!,
                     // Show circularProgressIndicator while image load
-                    placeholder: (_, __) {
-                      return const Center(
-                        child: SizedBox(
-                            height: 50,
-                            width: 50,
-                            child: CircularProgressIndicator()),
-                      );
-                    },
+                    placeholder: (_, __) => _placeholderWidget(),
                     // Show error message while image load fails
-                    errorWidget: (_, __, ___) {
-                      return Row(
-                        children: const [
-                          Icon(Icons.error_outline),
-                          Text(
-                            'Error fetching image',
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                        ],
-                      );
-                    },
+                    errorWidget: (_, __, ___) => _errorWidget(),
                   ),
                 ),
               const SizedBox(height: 5),
@@ -99,6 +98,27 @@ class ArticleCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _placeholderWidget() {
+    return const Center(
+      child:
+          SizedBox(height: 50, width: 50, child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget _errorWidget() {
+    return Center(
+      child: Row(
+        children: const [
+          Icon(Icons.error_outline),
+          Text(
+            'Error fetching image',
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
+        ],
       ),
     );
   }
