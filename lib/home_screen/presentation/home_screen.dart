@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/home_screen/data/models/article_model.dart';
 import 'package:news_app/home_screen/logic/bloc/bloc.dart';
 import 'package:news_app/theme/uiparameters.dart';
 import 'package:news_app/widgets/article_card.dart';
+import 'package:news_app/widgets/search_box.dart';
 import 'package:news_app/widgets/sidemenu.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,15 +18,27 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String selectedCategory = "general";
+  final ScrollController _controller = ScrollController();
+  bool isLoading = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('News App'),
+    return GestureDetector(
+      // Will hide keyboard when pressed outside the search box
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('News App'),
+        ),
+        drawer: const SideMenu(),
+        body: homeBody(),
       ),
-      drawer: const SideMenu(),
-      body: homeBody(),
     );
   }
 
@@ -37,22 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         // NewsLoadingState - While loading news/articles
         else if (state is NewsLoadingState) {
-          return Center(
-            child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
-            ),
-          );
-        }
-
-        // NewsSuccessState - On successful news Load
-        else if (state is NewsSuccessState) {
-          return RefreshIndicator(
-              onRefresh: () async {
-                context.read<NewsBloc>().add(
-                      GetArticlesEvent(categoryName: selectedCategory),
-                    );
-              },
-              child: buildArticles(context, state.articles));
+          return const Center(child: CircularProgressIndicator());
         }
 
         // NewsErrorState - On error while fetching news
@@ -75,12 +75,24 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
 
+        // NewsSuccessState - On successful news Load
+        else if (state is NewsSuccessState) {
+          return RefreshIndicator(
+              onRefresh: () async {
+                context.read<NewsBloc>().add(
+                      GetArticlesEvent(categoryName: selectedCategory),
+                    );
+              },
+              child: Column(
+                children: [
+                  SearchBox(context),
+                  Expanded(child: buildArticles(context, state.articles)),
+                ],
+              ));
+        }
+
         // default child - display loading animation
-        return Center(
-          child: CircularProgressIndicator(
-            color: Theme.of(context).primaryColor,
-          ),
-        );
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }
