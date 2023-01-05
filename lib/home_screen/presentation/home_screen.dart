@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/home_screen/data/models/article_model.dart';
@@ -17,7 +15,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String selectedCategory = "general";
   final ScrollController _controller = ScrollController();
   bool isLoading = false;
 
@@ -60,7 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
           return RefreshIndicator(
             onRefresh: () async {
               context.read<NewsBloc>().add(
-                    GetArticlesEvent(categoryName: selectedCategory),
+                    GetArticlesEvent(
+                        categoryName: context.read<NewsBloc>().categoryName),
                   );
             },
             child: Center(
@@ -80,7 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
           return RefreshIndicator(
               onRefresh: () async {
                 context.read<NewsBloc>().add(
-                      GetArticlesEvent(categoryName: selectedCategory),
+                      GetArticlesEvent(
+                          categoryName: context.read<NewsBloc>().categoryName),
                     );
               },
               child: Column(

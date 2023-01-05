@@ -12,6 +12,5 @@ class GetArticlesEvent extends NewsEvent {
 
 class SearchArticlesEvent extends NewsEvent {
   final String searchText;
-
   SearchArticlesEvent({required this.searchText});
 }

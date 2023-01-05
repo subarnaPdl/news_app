@@ -8,6 +8,7 @@ import '../bloc/news_state.dart';
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
   List<ArticleModel> articles = [];
   List<ArticleModel> searchItems = [];
+  String categoryName = 'general';
 
   NewsBloc() : super(NewsInitialState()) {
     on<NewsEvent>((event, emit) async {
@@ -16,7 +17,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         // Emit loading state
         emit(NewsLoadingState());
         try {
-          String categoryName = event.categoryName;
+          categoryName = event.categoryName;
           final NewsRepository newsRepository = NewsRepository();
           articles = await newsRepository.getArticles(categoryName);
           // On successfully loading news, emit success state
