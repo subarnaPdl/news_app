@@ -31,7 +31,7 @@ class _SearchBoxState extends State<SearchBox> {
           hintText: 'Search',
           prefixIcon: const Icon(Icons.search_rounded, color: Colors.white),
           // show clear icon only when there is some text in textfield
-          suffixIcon: (_tec.text.isNotEmpty) ? clear() : null,
+          suffixIcon: clearButton(),
         ),
 
         // Update results on changed text
@@ -42,15 +42,17 @@ class _SearchBoxState extends State<SearchBox> {
     );
   }
 
-  Widget clear() {
-    return IconButton(
-        onPressed: () {
-          _tec.clear(); // Clear textfield
-          context
-              .read<NewsBloc>()
-              .add(SearchArticlesEvent(searchText: '')); // Update List
-          FocusScope.of(context).requestFocus(FocusNode()); // Hide Keyboard
-        },
-        icon: const Icon(Icons.clear, color: Colors.white));
+  clearButton() {
+    return (_tec.text.isEmpty)
+        ? null
+        : IconButton(
+            onPressed: () {
+              _tec.clear(); // Clear textfield
+              context
+                  .read<NewsBloc>()
+                  .add(SearchArticlesEvent(searchText: '')); // Update List
+              FocusScope.of(context).requestFocus(FocusNode()); // Hide Keyboard
+            },
+            icon: const Icon(Icons.clear, color: Colors.white));
   }
 }
