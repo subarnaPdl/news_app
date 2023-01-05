@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/home_screen/data/models/article_model.dart';
 import 'package:news_app/home_screen/data/repo/news_repo.dart';
@@ -6,22 +8,38 @@ import '../bloc/news_event.dart';
 import '../bloc/news_state.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
+  late List<ArticleModel> allArticles; //stores complete article list
   List<ArticleModel> articles = [];
   List<ArticleModel> searchItems = [];
   String categoryName = 'general';
+
+  // for lazy loading
+  int top = 0;
+  int limit = 5;
+  bool hasMore = true;
+
+  reset() {
+    top = 0;
+    hasMore = true;
+  }
 
   NewsBloc() : super(NewsInitialState()) {
     on<NewsEvent>((event, emit) async {
       // Get Articles
       if (event is GetArticlesEvent) {
+        reset();
         // Emit loading state
         emit(NewsLoadingState());
         try {
           categoryName = event.categoryName;
           final NewsRepository newsRepository = NewsRepository();
-          articles = await newsRepository.getArticles(categoryName);
-          // On successfully loading news, emit success state
-          emit(NewsSuccessState(articles));
+          allArticles = await newsRepository.getArticles(categoryName);
+          // set search items
+          searchItems.clear();
+          searchItems.addAll(allArticles);
+
+          // On successfully loading news, start lazy loading
+          add(LazyLoadArticlesEvent());
         }
         // On failed loading news, emit error state
         catch (e) {
@@ -30,16 +48,34 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         }
       }
 
+      // Lazy loading list
+      if (event is LazyLoadArticlesEvent) {
+        if (hasMore) {
+          // Wait 1.2sec before load
+          await Future.delayed(const Duration(milliseconds: 1200));
+
+          top += limit;
+          // if articles are less than start
+          if (allArticles.length < top) {
+            articles = allArticles;
+          } else {
+            articles = allArticles.getRange(0, top).toList();
+          }
+
+          if (top >= allArticles.length) hasMore = false;
+        }
+
+        emit(NewsSuccessState(articles));
+      }
+
       // Search Articles
       else if (event is SearchArticlesEvent) {
-        // Emit loading state
-        emit(NewsLoadingState());
-        searchItems.addAll(articles);
-        print(searchItems);
+        reset();
 
         List<ArticleModel> dummySearchList = [];
         dummySearchList.addAll(searchItems);
-        String searchText = event.searchText;
+
+        String searchText = event.searchText.toLowerCase();
 
         if (searchText.isNotEmpty) {
           List<ArticleModel> dummyListData = [];
@@ -48,13 +84,15 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
               dummyListData.add(item);
             }
           }
-          articles.clear();
-          articles.addAll(dummyListData);
+          allArticles.clear();
+          allArticles.addAll(dummyListData);
         } else {
-          articles.clear();
-          articles.addAll(searchItems);
+          allArticles.clear();
+          allArticles.addAll(searchItems);
         }
-        emit(NewsSuccessState(articles));
+
+        // On successfully loading news, start lazy loading
+        add(LazyLoadArticlesEvent());
       }
     });
   }

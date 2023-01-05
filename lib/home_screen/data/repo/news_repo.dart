@@ -8,6 +8,7 @@ class NewsRepository {
 
     Map<String, String> params = {
       'category': categoryName,
+      'country': 'us',
       'apiKey': '22a6860c457f412d9f2e6af023fe07fa',
     };
     // https://newsapi.org/v2/top-headlines?category=$category&apiKey=$apiKey

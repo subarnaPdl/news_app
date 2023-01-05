@@ -66,31 +66,31 @@ class ArticleCard extends StatelessWidget {
               ),
 
             // Show image only if its available
-            if (articleModel.urlToImage != null)
-              SizedBox(
-                height: heigth * 0.55,
-                child: CachedNetworkImage(
-                  imageUrl: articleModel.urlToImage!,
-                  cacheKey: articleModel.urlToImage!,
-                  // Show circularProgressIndicator while image load
-                  placeholder: (_, __) {
-                    return const SizedBox(
-                        height: 50, child: CircularProgressIndicator());
-                  },
-                  // Show error message while image load fails
-                  errorWidget: (_, __, ___) {
-                    return Row(
-                      children: const [
-                        Icon(Icons.error_outline),
-                        Text(
-                          'Error fetching image',
-                          style: TextStyle(fontStyle: FontStyle.italic),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
+            if (articleModel.urlToImage != null) Text(articleModel.urlToImage!),
+            // SizedBox(
+            //   height: heigth * 0.55,
+            //   child: CachedNetworkImage(
+            //     imageUrl: articleModel.urlToImage!,
+            //     cacheKey: articleModel.urlToImage!,
+            //     // Show circularProgressIndicator while image load
+            //     placeholder: (_, __) {
+            //       return const SizedBox(
+            //           height: 50, child: CircularProgressIndicator());
+            //     },
+            //     // Show error message while image load fails
+            //     errorWidget: (_, __, ___) {
+            //       return Row(
+            //         children: const [
+            //           Icon(Icons.error_outline),
+            //           Text(
+            //             'Error fetching image',
+            //             style: TextStyle(fontStyle: FontStyle.italic),
+            //           ),
+            //         ],
+            //       );
+            //     },
+            //   ),
+            // ),
 
             // Show published date only if its avaiable
             if (articleModel.publishedAt != null)

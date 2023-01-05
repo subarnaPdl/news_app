@@ -19,6 +19,17 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = false;
 
   @override
+  void initState() {
+    super.initState();
+
+    _controller.addListener(() {
+      if (_controller.position.pixels == _controller.position.maxScrollExtent) {
+        context.read<NewsBloc>().add(LazyLoadArticlesEvent());
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
@@ -106,16 +117,30 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           flex: 1,
           child: ListView.builder(
+              controller: _controller,
               padding: EdgeInsets.only(
                   left: width * 0.025, right: width * 0.025, top: width * 0.01),
-              itemCount: articles!.length,
+              itemCount: articles!.length + 1,
               itemBuilder: ((context, index) {
-                return ArticleCard(
-                  heigth: heigth * 0.451,
-                  width: width,
-                  padding: width * 0.03,
-                  articleModel: articles[index],
-                );
+                if (index < articles.length) {
+                  return ArticleCard(
+                    heigth: heigth * 0.451,
+                    width: width,
+                    padding: width * 0.03,
+                    articleModel: articles[index],
+                  );
+                }
+
+                // show CircularProgressIndicator is list contains more items to load
+                else {
+                  return context.watch<NewsBloc>().hasMore
+                      ? const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ))
+                      : Container();
+                }
               })),
         ),
       ],

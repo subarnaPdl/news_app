@@ -15,4 +15,7 @@ class NewsErrorState extends NewsState {}
 class NewsSuccessState extends NewsState {
   final List<ArticleModel> articles;
   NewsSuccessState(this.articles);
+
+  @override
+  List<Object?> get props => [articles];
 }

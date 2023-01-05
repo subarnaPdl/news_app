@@ -10,6 +10,8 @@ class GetArticlesEvent extends NewsEvent {
   GetArticlesEvent({this.categoryName = "general"});
 }
 
+class LazyLoadArticlesEvent extends NewsEvent {}
+
 class SearchArticlesEvent extends NewsEvent {
   final String searchText;
   SearchArticlesEvent({required this.searchText});
