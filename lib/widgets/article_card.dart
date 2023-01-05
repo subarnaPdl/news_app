@@ -4,15 +4,14 @@ import 'package:intl/intl.dart';
 import 'package:news_app/home_screen/data/models/article_model.dart';
 
 class ArticleCard extends StatelessWidget {
-  final double heigth;
+  final double height;
   final double width;
   final double padding;
-
   final ArticleModel articleModel;
 
   const ArticleCard({
     Key? key,
-    required this.heigth,
+    required this.height,
     required this.width,
     required this.padding,
     required this.articleModel,
@@ -24,86 +23,81 @@ class ArticleCard extends StatelessWidget {
       onTap: () {
         // TODO: Implement ontap
       },
-      child: Container(
-        padding: EdgeInsets.all(padding),
-        margin: EdgeInsets.only(bottom: width * 0.03),
-        height: heigth,
-        width: width,
-        decoration: BoxDecoration(
-          // boxShadow: [
-          //   BoxShadow(
-          //       color: Colors.grey, spreadRadius: 1, blurRadius: width * 0.01)
-          // ],
-          borderRadius: BorderRadius.circular(width * 0.05),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            // Show title only if its available
-            if (articleModel.title != null)
-              SizedBox(
-                height: heigth * 0.15,
-                child: Text(
-                  articleModel.title!,
-                  maxLines: 2,
-                  style: TextStyle(
-                      overflow: TextOverflow.ellipsis,
-                      fontSize: width * 0.055,
-                      fontWeight: FontWeight.w400),
+      child: Card(
+        margin: const EdgeInsets.all(5),
+        child: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Show image only if its available
+              if (articleModel.urlToImage != null)
+                Center(
+                  child: CachedNetworkImage(
+                    height: height * 0.55,
+                    imageUrl: articleModel.urlToImage!,
+                    cacheKey: articleModel.urlToImage!,
+                    // Show circularProgressIndicator while image load
+                    placeholder: (_, __) {
+                      return const Center(
+                        child: SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: CircularProgressIndicator()),
+                      );
+                    },
+                    // Show error message while image load fails
+                    errorWidget: (_, __, ___) {
+                      return Row(
+                        children: const [
+                          Icon(Icons.error_outline),
+                          Text(
+                            'Error fetching image',
+                            style: TextStyle(fontStyle: FontStyle.italic),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
-              ),
+              const SizedBox(height: 5),
 
-            // Show descripition only if its available
-            if (articleModel.description != null)
-              SizedBox(
-                height: heigth * 0.15,
-                child: Text(
-                  articleModel.description!,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 3,
+              // Show title only if its available
+              if (articleModel.title != null)
+                SizedBox(
+                  height: height * 0.15,
+                  child: Text(
+                    articleModel.title!,
+                    maxLines: 2,
+                    style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        fontSize: width * 0.055,
+                        fontWeight: FontWeight.w400),
+                  ),
+                ),
+
+              // Show published date only if its avaiable
+              if (articleModel.publishedAt != null)
+                Text(
+                  DateFormat('MMM dd, y hh:mm a')
+                      .format(DateTime.parse(articleModel.publishedAt!)),
                   style: const TextStyle(fontWeight: FontWeight.w300),
                 ),
-              ),
+              const SizedBox(height: 5),
 
-            // Show image only if its available
-            if (articleModel.urlToImage != null) Text(articleModel.urlToImage!),
-            // SizedBox(
-            //   height: heigth * 0.55,
-            //   child: CachedNetworkImage(
-            //     imageUrl: articleModel.urlToImage!,
-            //     cacheKey: articleModel.urlToImage!,
-            //     // Show circularProgressIndicator while image load
-            //     placeholder: (_, __) {
-            //       return const SizedBox(
-            //           height: 50, child: CircularProgressIndicator());
-            //     },
-            //     // Show error message while image load fails
-            //     errorWidget: (_, __, ___) {
-            //       return Row(
-            //         children: const [
-            //           Icon(Icons.error_outline),
-            //           Text(
-            //             'Error fetching image',
-            //             style: TextStyle(fontStyle: FontStyle.italic),
-            //           ),
-            //         ],
-            //       );
-            //     },
-            //   ),
-            // ),
-
-            // Show published date only if its avaiable
-            if (articleModel.publishedAt != null)
-              SizedBox(
-                child: Text(
-                  DateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                      .parse(articleModel.publishedAt!)
-                      .toUtc()
-                      .toString(),
-                  style: const TextStyle(fontWeight: FontWeight.w300),
+              // Show descripition only if its available
+              if (articleModel.description != null)
+                SizedBox(
+                  height: height * 0.1,
+                  child: Text(
+                    articleModel.description!,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: const TextStyle(fontWeight: FontWeight.w300),
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

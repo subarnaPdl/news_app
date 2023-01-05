@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: ((context, index) {
                 if (index < articles.length) {
                   return ArticleCard(
-                    heigth: heigth * 0.451,
+                    height: heigth * 0.451,
                     width: width,
                     padding: width * 0.03,
                     articleModel: articles[index],
