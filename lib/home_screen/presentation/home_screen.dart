@@ -95,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: Column(
                 children: [
-                  SearchBox(context),
+                  const SearchBox(),
                   Expanded(child: buildArticles(context, state.articles)),
                 ],
               ));
