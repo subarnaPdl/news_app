@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:news_app/core/routes/routes_constant.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -10,7 +11,7 @@ class SplashScreen extends StatelessWidget {
     // Pause two seconds in SplashScreen
     // then goto HomeScreen
     Timer(const Duration(seconds: 2), () async {
-      Navigator.of(context).pushReplacementNamed(RouteConstant.homeScreen);
+      Get.toNamed(RouteConstant.homeScreen);
     });
     return Scaffold(
       appBar: AppBar(

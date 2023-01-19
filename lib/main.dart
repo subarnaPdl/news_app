@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:news_app/modules/presentation/home/home_screen.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:news_app/core/di/locator.dart';
 import 'package:news_app/core/routes/routes.dart';
 import 'package:news_app/core/routes/routes_constant.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Setup locator for DI
+  setupLocator();
 
   // Lock in portrait mode
   await SystemChrome.setPreferredOrientations([
@@ -18,10 +21,7 @@ Future<void> main() async {
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
 
-  runApp(BlocProvider(
-    create: (context) => NewsBloc(),
-    child: const MyApp(),
-  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return const GetMaterialApp(
       title: 'News App',
       debugShowCheckedModeBanner: false,
       onGenerateRoute: routes,

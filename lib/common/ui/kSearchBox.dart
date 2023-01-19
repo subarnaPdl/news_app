@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/modules/presentation/home/home_screen.dart';
 
 class KSearchBox extends StatefulWidget {
-  const KSearchBox({Key? key}) : super(key: key);
+  final HomeScreenController homeScreenController;
+  const KSearchBox({Key? key, required this.homeScreenController})
+      : super(key: key);
 
   @override
   State<KSearchBox> createState() => _KSearchBoxState();
@@ -24,7 +25,7 @@ class _KSearchBoxState extends State<KSearchBox> {
     //setState to update UI first
     setState(() {});
     // Recreate the initial list
-    context.read<NewsBloc>().add(SearchArticlesEvent(searchText: ''));
+    widget.homeScreenController.searchArticles();
     //Hide keyboard
     FocusScope.of(context).requestFocus(FocusNode());
   }
@@ -54,9 +55,7 @@ class _KSearchBoxState extends State<KSearchBox> {
           //setState to update UI first
           setState(() {});
           // Perform searching and updating list
-          context.read<NewsBloc>().add(
-                SearchArticlesEvent(searchText: value),
-              );
+          widget.homeScreenController.searchArticles(searchText: value);
         },
       ),
     );

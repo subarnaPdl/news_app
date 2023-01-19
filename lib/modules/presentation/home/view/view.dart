@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:news_app/common/ui/kSearchBox.dart';
+import 'package:news_app/core/di/locator.dart';
 import 'package:news_app/data/models/news_article_model.dart';
 import 'package:news_app/theme/uiparameters.dart';
 import 'package:news_app/common/ui/kArticleCard.dart';
@@ -14,23 +15,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final ScrollController _controller = ScrollController();
-  bool isLoading = false;
+  final ScrollController _scrollController = ScrollController();
+  final HomeScreenController _homeScreenController = Get.put(locator());
 
   @override
   void initState() {
     super.initState();
 
-    _controller.addListener(() {
-      if (_controller.position.pixels == _controller.position.maxScrollExtent) {
-        context.read<NewsBloc>().add(LazyLoadArticlesEvent());
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _homeScreenController.lazyLoadArticles();
       }
     });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -43,67 +45,55 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: const Text('News App'),
         ),
-        drawer: const HomePageDrawer(),
+        drawer: HomePageDrawer(homeScreenController: _homeScreenController),
         body: homeBody(),
       ),
     );
   }
 
   Widget homeBody() {
-    return BlocBuilder<NewsBloc, NewsState>(
-      builder: (context, state) {
-        // NewsInitialState - First lauch state
-        if (state is NewsInitialState) {
-          context.read<NewsBloc>().add(GetArticlesEvent());
-        }
+    return GetBuilder<HomeScreenController>(builder: (controller) {
+      // InitialState - First lauch state
+      if (controller.homeScreenState == HomeScreenState.initial) {
+        controller.getArticles();
+      }
 
-        // NewsLoadingState - While loading news/articles
-        else if (state is NewsLoadingState) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        // NewsErrorState - On error while fetching news
-        else if (state is NewsErrorState) {
-          return RefreshIndicator(
-            onRefresh: () async {
-              context.read<NewsBloc>().add(
-                    GetArticlesEvent(
-                        categoryName: context.read<NewsBloc>().categoryName),
-                  );
-            },
-            child: Center(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(Icons.error_outline),
-                Text("Error Occured!!"),
-              ],
-            )),
-          );
-        }
-
-        // NewsSuccessState - On successful news Load
-        else if (state is NewsSuccessState) {
-          return RefreshIndicator(
-              onRefresh: () async {
-                context.read<NewsBloc>().add(
-                      GetArticlesEvent(
-                          categoryName: context.read<NewsBloc>().categoryName),
-                    );
-              },
-              child: Column(
-                children: [
-                  const KSearchBox(),
-                  Expanded(child: buildArticles(context, state.articles)),
-                ],
-              ));
-        }
-
-        // default child - display loading animation
+      // LoadingState - While loading news/articles
+      if (controller.homeScreenState == HomeScreenState.loading) {
         return const Center(child: CircularProgressIndicator());
-      },
-    );
+      }
+
+      // ErrorState - On error while fetching news
+      else if (controller.homeScreenState == HomeScreenState.error) {
+        return RefreshIndicator(
+          onRefresh: () async => controller.getArticles(),
+          child: Center(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.error_outline),
+              Text("Error Occured!!"),
+            ],
+          )),
+        );
+      }
+
+      // NewsSuccessState - On successful news Load
+      else if (controller.homeScreenState == HomeScreenState.loaded) {
+        return RefreshIndicator(
+            onRefresh: () async => controller.getArticles(),
+            child: Column(
+              children: [
+                KSearchBox(homeScreenController: _homeScreenController),
+                Expanded(child: buildArticles(context, controller.articles)),
+              ],
+            ));
+      }
+
+      // default child - display loading animation
+      return const Center(child: CircularProgressIndicator());
+    });
   }
 
   Widget buildArticles(BuildContext context, List<ArticleModel>? articles) {
@@ -116,31 +106,32 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           flex: 1,
           child: ListView.builder(
-              controller: _controller,
-              padding: EdgeInsets.only(
-                  left: width * 0.025, right: width * 0.025, top: width * 0.01),
-              itemCount: articles!.length + 1,
-              itemBuilder: ((context, index) {
-                if (index < articles.length) {
-                  return KArticleCard(
-                    height: heigth * 0.451,
-                    width: width,
-                    padding: width * 0.03,
-                    articleModel: articles[index],
-                  );
-                }
+            controller: _scrollController,
+            padding: EdgeInsets.only(
+                left: width * 0.025, right: width * 0.025, top: width * 0.01),
+            itemCount: articles!.length + 1,
+            itemBuilder: ((context, index) {
+              if (index < articles.length) {
+                return KArticleCard(
+                  height: heigth * 0.451,
+                  width: width,
+                  padding: width * 0.03,
+                  articleModel: articles[index],
+                );
+              }
 
-                // show CircularProgressIndicator is list contains more items to load
-                else {
-                  return context.watch<NewsBloc>().hasMore
-                      ? const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ))
-                      : Container();
-                }
-              })),
+              // show CircularProgressIndicator is list contains more items to load
+              else {
+                return _homeScreenController.hasMore
+                    ? const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ))
+                    : Container();
+              }
+            }),
+          ),
         ),
       ],
     );

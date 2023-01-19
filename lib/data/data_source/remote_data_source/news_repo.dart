@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:news_app/common/constants/url_constant.dart';
@@ -18,8 +17,7 @@ class NewsRepository {
 
     try {
       final response = await dio.get(baseUrl, queryParameters: params);
-      Map<String, dynamic> json = jsonDecode(response.data);
-      List<dynamic> articlesJson = json['articles'];
+      List<dynamic> articlesJson = response.data['articles'];
 
       articles = articlesJson
           .map((dynamic item) => ArticleModel.fromJson(item))

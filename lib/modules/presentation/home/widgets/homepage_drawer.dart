@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:news_app/modules/presentation/home/home_screen.dart';
 import 'package:news_app/theme/uiparameters.dart';
 
 class HomePageDrawer extends StatefulWidget {
-  const HomePageDrawer({Key? key}) : super(key: key);
+  final HomeScreenController homeScreenController;
+  const HomePageDrawer({Key? key, required this.homeScreenController})
+      : super(key: key);
 
   @override
   State<HomePageDrawer> createState() => _HomePageDrawerState();
@@ -62,7 +64,7 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
       'technology',
     ];
 
-    String selectedCategory = context.watch<NewsBloc>().categoryName;
+    String selectedCategory = widget.homeScreenController.categoryName;
 
     return MediaQuery.removePadding(
       context: context,
@@ -78,10 +80,9 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
                 isSelected: category == selectedCategory,
                 onClick: () {
                   // fetch articles based on category
-                  context
-                      .read<NewsBloc>()
-                      .add(GetArticlesEvent(categoryName: category));
-                  Navigator.pop(context);
+                  widget.homeScreenController
+                      .getArticles(categoryName: category);
+                  Get.back();
                 }),
         ],
       ),
