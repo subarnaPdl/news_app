@@ -1,9 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:news_app/common/constants/url_constant.dart';
 import 'package:news_app/data/models/news_article_model.dart';
 
 class NewsRepository {
+  static final NewsRepository to = Get.find();
+
   Future<List<ArticleModel>> getArticles(String categoryName) async {
     List<ArticleModel> articles = [];
 

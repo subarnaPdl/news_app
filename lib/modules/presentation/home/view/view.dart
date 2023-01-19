@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:news_app/common/ui/kSearchBox.dart';
-import 'package:news_app/core/di/locator.dart';
 import 'package:news_app/data/models/news_article_model.dart';
 import 'package:news_app/theme/uiparameters.dart';
 import 'package:news_app/common/ui/kArticleCard.dart';
@@ -16,7 +15,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
-  final HomeScreenController _homeScreenController = Get.put(locator());
 
   @override
   void initState() {
@@ -25,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        _homeScreenController.lazyLoadArticles();
+        HomeScreenController.to.lazyLoadArticles();
       }
     });
   }
@@ -45,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: const Text('News App'),
         ),
-        drawer: HomePageDrawer(homeScreenController: _homeScreenController),
+        drawer: const HomePageDrawer(),
         body: homeBody(),
       ),
     );
@@ -85,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onRefresh: () async => controller.getArticles(),
             child: Column(
               children: [
-                KSearchBox(homeScreenController: _homeScreenController),
+                const KSearchBox(),
                 Expanded(child: buildArticles(context, controller.articles)),
               ],
             ));
@@ -122,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // show CircularProgressIndicator is list contains more items to load
               else {
-                return _homeScreenController.hasMore
+                return HomeScreenController.to.hasMore
                     ? const Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
                         child: Center(

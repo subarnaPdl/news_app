@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:news_app/modules/presentation/home/home_screen.dart';
 
 class KSearchBox extends StatefulWidget {
-  final HomeScreenController homeScreenController;
-  const KSearchBox({Key? key, required this.homeScreenController})
-      : super(key: key);
+  const KSearchBox({Key? key}) : super(key: key);
 
   @override
   State<KSearchBox> createState() => _KSearchBoxState();
@@ -25,7 +23,7 @@ class _KSearchBoxState extends State<KSearchBox> {
     //setState to update UI first
     setState(() {});
     // Recreate the initial list
-    widget.homeScreenController.searchArticles();
+    HomeScreenController.to.searchArticles();
     //Hide keyboard
     FocusScope.of(context).requestFocus(FocusNode());
   }
@@ -55,7 +53,7 @@ class _KSearchBoxState extends State<KSearchBox> {
           //setState to update UI first
           setState(() {});
           // Perform searching and updating list
-          widget.homeScreenController.searchArticles(searchText: value);
+          HomeScreenController.to.searchArticles(searchText: value);
         },
       ),
     );

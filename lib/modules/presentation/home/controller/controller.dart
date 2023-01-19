@@ -5,6 +5,8 @@ import 'package:news_app/data/models/news_article_model.dart';
 enum HomeScreenState { initial, loading, error, loaded }
 
 class HomeScreenController extends GetxController {
+  static final HomeScreenController to = Get.find();
+
   String _categoryName = 'general';
   String get categoryName => _categoryName;
 
@@ -35,13 +37,10 @@ class HomeScreenController extends GetxController {
     _homeScreenState = HomeScreenState.loading;
     update();
 
-    final NewsRepository newsRepository = NewsRepository();
-    _allArticles = await newsRepository.getArticles(_categoryName);
+    _allArticles = await NewsRepository.to.getArticles(_categoryName);
     // set search items
     _searchItems.clear();
     _searchItems.addAll(_allArticles);
-
-    print('searchItems : $_searchItems');
 
     // On successfully loading news, start lazy loading
     lazyLoadArticles();
