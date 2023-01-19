@@ -2,15 +2,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:news_app/home_screen/data/models/article_model.dart';
+import 'package:news_app/data/models/news_article_model.dart';
 
-class ArticleCard extends StatelessWidget {
+class KArticleCard extends StatelessWidget {
   final double height;
   final double width;
   final double padding;
   final ArticleModel articleModel;
 
-  const ArticleCard({
+  const KArticleCard({
     Key? key,
     required this.height,
     required this.width,

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:news_app/home_screen/logic/bloc/bloc.dart';
+import 'package:news_app/modules/presentation/home/home_screen.dart';
 
-class SearchBox extends StatefulWidget {
-  const SearchBox({Key? key}) : super(key: key);
+class KSearchBox extends StatefulWidget {
+  const KSearchBox({Key? key}) : super(key: key);
 
   @override
-  State<SearchBox> createState() => _SearchBoxState();
+  State<KSearchBox> createState() => _KSearchBoxState();
 }
 
-class _SearchBoxState extends State<SearchBox> {
+class _KSearchBoxState extends State<KSearchBox> {
   final TextEditingController _tec = TextEditingController();
 
   @override

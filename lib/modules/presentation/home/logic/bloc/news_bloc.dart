@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:news_app/home_screen/data/models/article_model.dart';
-import 'package:news_app/home_screen/data/repo/news_repo.dart';
+import 'package:news_app/data/models/news_article_model.dart';
+import 'package:news_app/data/data_source/remote_data_source/news_repo.dart';
 
 import '../bloc/news_event.dart';
 import '../bloc/news_state.dart';

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:news_app/home_screen/data/models/article_model.dart';
-import 'package:news_app/home_screen/logic/bloc/bloc.dart';
+import 'package:news_app/common/ui/kSearchBox.dart';
+import 'package:news_app/data/models/news_article_model.dart';
 import 'package:news_app/theme/uiparameters.dart';
-import 'package:news_app/widgets/article_card.dart';
-import 'package:news_app/widgets/search_box.dart';
-import 'package:news_app/widgets/sidemenu.dart';
+import 'package:news_app/common/ui/kArticleCard.dart';
+import 'package:news_app/modules/presentation/home/home_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -44,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: const Text('News App'),
         ),
-        drawer: const SideMenu(),
+        drawer: const HomePageDrawer(),
         body: homeBody(),
       ),
     );
@@ -95,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: Column(
                 children: [
-                  const SearchBox(),
+                  const KSearchBox(),
                   Expanded(child: buildArticles(context, state.articles)),
                 ],
               ));
@@ -123,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: articles!.length + 1,
               itemBuilder: ((context, index) {
                 if (index < articles.length) {
-                  return ArticleCard(
+                  return KArticleCard(
                     height: heigth * 0.451,
                     width: width,
                     padding: width * 0.03,

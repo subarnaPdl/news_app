@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/home_screen/presentation/home_screen.dart';
-import 'package:news_app/routes/routes_constant.dart';
-import 'package:news_app/splash_screen/splash_screen.dart';
+import 'package:news_app/core/routes/routes_constant.dart';
+import 'package:news_app/modules/presentation/home/home_screen.dart';
+import 'package:news_app/modules/presentation/splash/splash_screen.dart';
 
 Route routes(RouteSettings settings) {
   switch (settings.name) {

@@ -1,6 +1,8 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:news_app/home_screen/data/models/article_model.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:news_app/common/constants/url_constant.dart';
+import 'package:news_app/data/models/news_article_model.dart';
 
 class NewsRepository {
   Future<List<ArticleModel>> getArticles(String categoryName) async {
@@ -11,12 +13,12 @@ class NewsRepository {
       'country': 'us',
       'apiKey': '22a6860c457f412d9f2e6af023fe07fa',
     };
-    // https://newsapi.org/v2/top-headlines?category=$category&apiKey=$apiKey
-    final uri = Uri.https('newsapi.org', '/v2/top-headlines', params);
+
+    Dio dio = Dio();
 
     try {
-      final response = await http.get(uri);
-      Map<String, dynamic> json = jsonDecode(response.body);
+      final response = await dio.get(baseUrl, queryParameters: params);
+      Map<String, dynamic> json = jsonDecode(response.data);
       List<dynamic> articlesJson = json['articles'];
 
       articles = articlesJson
@@ -25,7 +27,9 @@ class NewsRepository {
 
       return articles;
     } catch (e) {
-      throw ("Error on NewsRepository: ${e.toString()}");
+      if (kDebugMode) print("Error on NewsRepository: ${e.toString()}");
     }
+
+    return [];
   }
 }

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:news_app/home_screen/logic/bloc/bloc.dart';
+import 'package:news_app/modules/presentation/home/home_screen.dart';
 import 'package:news_app/theme/uiparameters.dart';
 
-class SideMenu extends StatefulWidget {
-  const SideMenu({Key? key}) : super(key: key);
+class HomePageDrawer extends StatefulWidget {
+  const HomePageDrawer({Key? key}) : super(key: key);
 
   @override
-  State<SideMenu> createState() => _SideMenuState();
+  State<HomePageDrawer> createState() => _HomePageDrawerState();
 }
 
-class _SideMenuState extends State<SideMenu> {
+class _HomePageDrawerState extends State<HomePageDrawer> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(

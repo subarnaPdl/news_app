@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:news_app/home_screen/logic/bloc/news_bloc.dart';
-import 'package:news_app/routes/routes.dart';
-import 'package:news_app/routes/routes_constant.dart';
+import 'package:news_app/modules/presentation/home/home_screen.dart';
+import 'package:news_app/core/routes/routes.dart';
+import 'package:news_app/core/routes/routes_constant.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
